@@ -154,7 +154,7 @@ li:hover {
  }
 
  li-prefeitura{ 
-    font-size: 18px;
+    font-size: 22px;
     font-family:'Poppins', sans-serif;
     color:black ;
  }
@@ -166,12 +166,10 @@ li:hover {
 
  ul-prefeitura {
     width: 100%;
-    height: 100%;
-    display: center;
-    grid-template-columns: repeat(4,1fr);
-   
-    
-  
+    height: 50%;
+    display: grid;
+    grid-template-columns:repeat(3,1fr);
+    gap: 10px;
  }
 
  header-prefeitura {
@@ -192,11 +190,11 @@ li:hover {
  }
  .prefeitura-img {
     width: 50px;
-    margin-top: 30px;
-    padding-top: 20px;
+    margin-top: 2px;
+    padding-top: 5px;
     position: relative; top: 60px;
     transform: translaty(10px);
-    left: 35px;
+    left: 20px;
     
  }
 
@@ -251,41 +249,106 @@ li:hover {
     background-color: #01008C;
  }
 
+ 
 
- @media(max-width: 415px) {
-    nav ul {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      
-      nav li {
-        margin-bottom: 10px;
-      }
-      
-      nav a {
-        font-size: 10px;
-      }
-
-    header {
-    height: 210px;
-    width: 100%;
-    }  
-
-    .logo{
-        width: 100px;
-        height: auto;
-    }
-
-    .logo img {
-        width: 100%;
-        height: auto;
-      }
+ .sistema-img {
+    width: 50%;
+    margin: 40px;
+   display: inline-block;
+    margin-top: 110px;
     
  }
 
+ li-sistema{ 
+    font-size: 22px;
+    font-family:'Poppins', sans-serif;
+    color:black ;
+ }
 
+ li-sistema:hover{
+    color:black;
+    cursor: pointer
+ }
 
+ ul-sistema {
+    width: 100%;
+    height: 50%;
+    display: grid;
+    grid-template-columns:repeat(3,1fr);
+    gap: 10px;
+ }
 
+ header-sistema {
+    width: 100%;
+    height: 80px;
+    padding: 0 0px;
+    display: flex;
+    flex-direction: column;
+    background-color: #01008C;
+ }
+
+  
+ .sistema-img {
+    width: 60px;
+    margin-top:1px;
+    padding-top: 5px;
+    position: relative; top: 60px;
+    transform: translaty(10px);
+    left: 35px;
+    
+ }
+
+ .logo-img-sistema {
+    width: 80px;
+ }
+
+ .licencas-img {
+   width: 50%;
+   margin: 40px;
+  display: inline-block;
+   margin-top: 110px;
+   
+}
+
+li-licencas{ 
+   font-size: 22px;
+   font-family:'Poppins', sans-serif;
+   color:black ;
+}
+
+li-licencas:hover{
+   color:black;
+   cursor: pointer
+}
+
+ul-licencas{
+   width: 100%;
+   height: 50%;
+   display: grid;
+   grid-template-columns:repeat(3,1fr);
+   gap: 10px;
+}
+
+header-licencas {
+   width: 100%;
+   height: 80px;
+   padding: 0 0px;
+   display: flex;
+   flex-direction: column;
+   background-color: #01008C;
+}
 
  
+.licencas-img {
+   width: 120px;
+   margin-top: 30px;
+   padding-top: 10px;
+   position: relative; top: 60px;
+   transform: translaty(10px);
+   left: 40px;
+   
+}
+
+.logo-img-licencas {
+   width: 80px;
+}

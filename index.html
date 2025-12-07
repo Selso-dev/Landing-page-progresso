@@ -21,41 +21,7 @@
     </div>
   </div>
 
-  <script>
-    // Lista de eventos
-    const eventos = [
-      { data: "2025-06-25", mensagem: "Hoje é o último dia para a entrega do SPED fiscal 05-2025." },
-      { data: "2025-06-27", mensagem: "Hoje é o último dia para a entrega da DESTDA 05-2025." },
-      { data: "2025-06-30", mensagem: "Hoje é o último dia para a entrega do MIT 05-2025" }
-    ];
 
-    function mostrarModal(mensagens) {
-      const modal = document.getElementById("modal");
-      const mensagemEvento = document.getElementById("mensagemEvento");
-      mensagemEvento.innerHTML = mensagens.join("<br><br>");
-      modal.style.display = "flex";
-    }
-
-    function fecharModal() {
-      document.getElementById("modal").style.display = "none";
-    }
-
-    window.onload = function () {
-      const hoje = new Date();
-      const hojeFormatado = hoje.toISOString().split('T')[0]; // formato YYYY-MM-DD
-      const mensagensParaHoje = [];
-
-      eventos.forEach(evento => {
-        if (evento.data === hojeFormatado) {
-          mensagensParaHoje.push(evento.mensagem);
-        }
-      });
-
-      if (mensagensParaHoje.length > 0) {
-        mostrarModal(mensagensParaHoje);
-      }
-    };
-  </script>
 
     <a>
         <div class="logo">

@@ -64,10 +64,10 @@ li:hover {
     cursor: pointer
 }
 .index {
-    background-image: url('./LOGO\ PROGRESSO\ MARCO.png');
-    background-position: 50% 50%;
+    background-image: url('./Logo\ progresso\ IRPF.png');
+    background-position: center 30px;
     background-repeat: no-repeat;
-    background-size:contain;
+    background-size:52%;
     width: 100%;
     height: 100vh;
     display: flex;

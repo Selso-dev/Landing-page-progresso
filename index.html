@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Progresso Contábil — Agenda Tributária</title>
+  <title>Progresso Contábil — Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;600;700&family=Manrope:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet"/>
   <style>
-
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     a { text-decoration: none; color: inherit; }
     ul { list-style: none; }
@@ -20,6 +19,7 @@
       --sidebar-w: 240px; --header-h: 64px; --radius: 12px;
       --shadow: 0 2px 12px rgba(1,0,140,.10); --shadow-lg: 0 8px 32px rgba(1,0,140,.16);
     }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
 
     /* Sidebar */
     .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: var(--navy); display: flex; flex-direction: column; z-index: 100; transition: transform .3s ease; }
@@ -37,26 +37,124 @@
     .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: .7; }
     .nav-item.active svg, .nav-item:hover svg { opacity: 1; }
 
-    /* Main (área ao lado da sidebar, dedicada por completo à Agenda Tributária) */
-    .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+    /* Main */
+    .main { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Hamburger / Overlay (abre/fecha a sidebar no mobile) */
+    /* Topbar */
+    .topbar { position: sticky; top: 0; z-index: 50; height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .topbar-title { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; color: var(--navy); }
+    .topbar-badge-btn { display: inline-flex; align-items: center; gap: 7px; background: #EEF3FE; color: var(--navy); border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .18s; }
+    .topbar-badge-btn:hover { background: var(--navy); color: white; border-color: var(--navy); }
+    .topbar-badge-btn:hover .badge-dot { background: white; }
+    .topbar-badge-btn:hover svg { stroke: white; }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); transition: background .18s; }
+    .topbar-badge-btn svg { width: 13px; height: 13px; stroke: var(--navy); transition: stroke .18s; }
+
+    /* Content */
+    .content { flex: 1; padding: 32px; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .section-header { margin-bottom: 28px; }
+    .section-header h2 { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .section-header p { font-size: 13px; color: var(--muted); }
+
+    /* Search */
+    .search-bar { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 16px; margin-bottom: 24px; max-width: 400px; }
+    .search-bar svg { color: var(--muted); flex-shrink: 0; width: 16px; height: 16px; }
+    .search-bar input { border: none; outline: none; font-size: 14px; color: var(--text); width: 100%; font-family: 'Inter', sans-serif; background: transparent; }
+    .search-bar input::placeholder { color: var(--muted); }
+
+    /* Grid */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 16px; }
+
+    /* Card */
+    .card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px 14px 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; position: relative; overflow: hidden; }
+    .card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--navy), var(--accent)); transform: scaleX(0); transform-origin: left; transition: transform .22s ease; }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+    .card:hover::after { transform: scaleX(1); }
+    .card-icon { width: 64px; height: 64px; border-radius: 14px; background: #F4F6FB; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+    .card-icon img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+    .card-name { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.4; }
+    .card-tag { font-size: 10px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); margin-top: -4px; }
+    .card-arrow { width: 26px; height: 26px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--muted); margin-top: 2px; transition: background .18s, color .18s; }
+    .card:hover .card-arrow { background: var(--navy); color: white; }
+    .card-arrow svg { width: 12px; height: 12px; }
+
+    /* DESTAQUE */
+    .destaque-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .destaque-label::before { content: '★'; color: #F59E0B; }
+    .destaque-banner { border-radius: 16px; overflow: hidden; border: 2px dashed var(--border); background: var(--surface); min-height: 360px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: border-color .2s, box-shadow .2s; margin-bottom: 28px; }
+    .destaque-banner:hover { border-color: var(--accent); box-shadow: var(--shadow-lg); }
+    .destaque-banner.has-image { border-style: solid; border-color: transparent; }
+    .destaque-banner.has-image:hover { border-color: var(--accent); }
+    #destaque-img { width: 100%; height: 100%; object-fit: cover; max-height: 360px; display: none; border-radius: 14px; }
+    .destaque-banner.has-image #destaque-img { display: block; }
+    .destaque-placeholder { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--muted); padding: 70px 40px; text-align: center; }
+    .destaque-banner.has-image .destaque-placeholder { display: none; }
+    .destaque-placeholder svg { width: 56px; height: 56px; opacity: .22; }
+    .destaque-placeholder strong { font-size: 15px; font-weight: 600; color: var(--text); }
+    .destaque-placeholder span { font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .destaque-placeholder kbd { background: #EEF3FE; color: var(--navy); border-radius: 5px; padding: 1px 7px; font-size: 11px; font-family: 'Inter', sans-serif; font-weight: 600; border: 1px solid var(--border); }
+    .destaque-overlay { position: absolute; inset: 0; background: rgba(1,0,140,.5); display: none; align-items: center; justify-content: center; gap: 12px; border-radius: 14px; }
+    .destaque-banner.has-image:hover .destaque-overlay { display: flex; }
+    .destaque-overlay button { display: flex; align-items: center; gap: 6px; background: white; color: var(--navy); border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all .15s; }
+    .destaque-overlay button:hover { background: var(--accent); color: white; }
+    .destaque-overlay button svg { width: 14px; height: 14px; }
+
+    /* Quick grid */
+    .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .quick-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px 18px 14px; cursor: pointer; transition: all .18s ease; display: flex; flex-direction: column; gap: 6px; }
+    .quick-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
+    .quick-card-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .quick-card h3 { font-size: 13px; font-weight: 700; color: var(--text); }
+    .quick-card p { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .quick-card-count { font-size: 10px; font-weight: 600; color: var(--navy); background: #EEF3FE; border-radius: 6px; padding: 2px 8px; align-self: flex-start; margin-top: 2px; }
+
+    /* Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 200; display: none; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal-box { background: white; border-radius: 16px; padding: 32px; width: 90%; max-width: 480px; box-shadow: 0 24px 64px rgba(0,0,0,.25); }
+    .modal-box h3 { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .modal-box p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .modal-upload-area { border: 2px dashed var(--border); border-radius: 12px; padding: 32px; text-align: center; cursor: pointer; transition: border-color .18s, background .18s; margin-bottom: 16px; display: block; }
+    .modal-upload-area:hover { border-color: var(--accent); background: #F4F8FF; }
+    .modal-upload-area svg { width: 40px; height: 40px; color: var(--muted); margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto; }
+    .modal-upload-area strong { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .modal-upload-area span { font-size: 12px; color: var(--muted); }
+    .modal-upload-area input[type=file] { display: none; }
+    .modal-divider { text-align: center; font-size: 12px; color: var(--muted); margin: 12px 0; position: relative; }
+    .modal-divider::before, .modal-divider::after { content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: var(--border); }
+    .modal-divider::before { left: 0; } .modal-divider::after { right: 0; }
+    .modal-url-row { display: flex; gap: 8px; margin-bottom: 20px; }
+    .modal-url-row input { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--text); outline: none; transition: border-color .18s; }
+    .modal-url-row input:focus { border-color: var(--accent); }
+    .modal-url-row button { background: var(--navy); color: white; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-footer button { border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; border: none; }
+    .btn-cancel { background: var(--bg); color: var(--text); } .btn-cancel:hover { background: var(--border); }
+    .btn-remove { background: #FEE2E2; color: #B91C1C; } .btn-remove:hover { background: #FCA5A5; }
+
+    /* Hamburger / Overlay */
     .hamburger { display: none; position: fixed; top: 14px; left: 14px; z-index: 150; background: var(--surface); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; color: var(--navy); box-shadow: var(--shadow); }
+    .topbar.topbar-hidden { display: none; }
+    .content.content-flush { padding: 0; }
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 90; }
-    .overlay.show { display: block; }
 
     /* Responsive */
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0; }
-      .hamburger { display: flex; }
+      .overlay.show { display: block; } .main { margin-left: 0; }
+      .hamburger { display: flex; } .topbar { padding: 0 16px 0 64px; } .content { padding: 16px; }
+      .quick-grid { grid-template-columns: repeat(2, 1fr); }
+      .destaque-banner { min-height: 200px; }
     }
-
-    /* ===================================================== */
-    /* Estilos da Agenda Tributária (ocupa toda a área principal) */
-    /* ===================================================== */
-
-:root{
+    @media (max-width: 480px) {
+      .quick-grid { grid-template-columns: 1fr 1fr; }
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  
+    /* ===================== Agenda Tributária (escopado em #section-agenda) ===================== */
+#section-agenda{
   --ink-900:#0a0e50; --ink-800:#11166a; --ink-700:#182183; --ink-600:#2b3499;
   --paper-0:#f5f6fb; --paper-50:#eceefa; --paper-100:#dde1f4; --paper-line:#dde1f2;
   --brass:#c9932f; --brass-dark:#a37620; --brass-light:#eac273;
@@ -73,365 +171,157 @@
   --line:var(--paper-line); --text:var(--ink-900); --text-dim:#4d5280; --text-faint:#8388b3;
   --accent:var(--ink-700); --accent-dark:var(--ink-900);
   --brand-navy:#0a0e50; --brand-navy-mid:#131c78; --brand-navy-soft:#1d2894;
-}
-[data-theme="dark"]{
+}#section-agenda[data-theme="dark"]{
   --bg:#070a3c; --bg-elev:#111a5e; --bg-sunken:#0a1250;
   --line:#232d80; --text:#e9ebfa; --text-dim:#b0b6de; --text-faint:#7d84b8;
   --accent:var(--brass-light); --accent-dark:var(--brass);
   --shadow-card:0 1px 2px rgba(0,0,0,.3), 0 6px 24px -6px rgba(0,0,0,.5);
-}
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-html,body{margin:0;padding:0;}
-body{
+}#section-agenda *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}#section-agenda .app{
   background:var(--bg); color:var(--text); font-family:var(--font-body);
   min-height:100vh; transition:background .3s ease, color .3s ease;
   background-image:
     linear-gradient(var(--line) 1px, transparent 1px);
   background-size:100% 2.2em;
   background-attachment:local;
-}
-[data-theme="dark"] body{background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px);}
-a{color:inherit;}
-button{font-family:inherit;}
-.app{max-width:1280px; margin:0 auto; padding:20px 20px 80px;}
-
-/* ===== HEADER ===== */
+}#section-agenda[data-theme="dark"] .app{background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px);}#section-agenda a{color:inherit;}#section-agenda button{font-family:inherit;}#section-agenda .app{max-width:1280px; margin:0 auto; padding:20px 20px 80px;}#section-agenda /* ===== HEADER ===== */
 .masthead{
   display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 24px; flex-wrap:wrap;
   margin-bottom:20px; background:linear-gradient(135deg, var(--brand-navy-mid), var(--brand-navy) 70%);
   border-radius:var(--radius-l); box-shadow:var(--shadow-card); position:relative; overflow:hidden;
-}
-.masthead::after{
+}#section-agenda .masthead::after{
   content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
   background:radial-gradient(420px 160px at 88% -20%, rgba(201,147,47,.35), transparent 70%);
-}
-.masthead .brand-mark{display:flex; align-items:center; gap:14px; position:relative; z-index:1;}
-.stamp-logo{width:46px; height:46px; flex-shrink:0;}
-.brand-text h1{font-family:var(--font-display); font-weight:800; font-size:1.5rem; margin:0; letter-spacing:-.01em; color:#fff;}
-.brand-text .sub{font-family:var(--font-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:#aab1e8; margin-top:3px;}
-.header-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap; position:relative; z-index:1;}
-.icon-btn{
+}#section-agenda .masthead .brand-mark{display:flex; align-items:center; gap:14px; position:relative; z-index:1;}#section-agenda .stamp-logo{width:46px; height:46px; flex-shrink:0;}#section-agenda .brand-text h1{font-family:var(--font-display); font-weight:800; font-size:1.5rem; margin:0; letter-spacing:-.01em; color:#fff;}#section-agenda .brand-text .sub{font-family:var(--font-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:#aab1e8; margin-top:3px;}#section-agenda .header-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap; position:relative; z-index:1;}#section-agenda .icon-btn{
   width:38px; height:38px; border-radius:50%; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.08);
   display:flex; align-items:center; justify-content:center; cursor:pointer; color:#dfe2f7;
   transition:all .2s ease; backdrop-filter:blur(2px);
-}
-.icon-btn:hover{border-color:var(--brass-light); color:var(--brass-light); background:rgba(255,255,255,.14); transform:translateY(-1px);}
-.icon-btn svg{width:18px; height:18px;}
-.bell-badge{
+}#section-agenda .icon-btn:hover{border-color:var(--brass-light); color:var(--brass-light); background:rgba(255,255,255,.14); transform:translateY(-1px);}#section-agenda .icon-btn svg{width:18px; height:18px;}#section-agenda .bell-badge{
   position:absolute; top:-4px; right:-4px; background:var(--red); color:#fff; font-family:var(--font-mono);
   font-size:.62rem; min-width:16px; height:16px; border-radius:9px; display:none; align-items:center; justify-content:center;
   padding:0 4px; border:2px solid var(--brand-navy); line-height:1;
-}
-.bell-badge.show{display:flex;}
-@keyframes bellRing{0%,100%{transform:rotate(0);} 20%{transform:rotate(-12deg);} 40%{transform:rotate(10deg);} 60%{transform:rotate(-8deg);} 80%{transform:rotate(6deg);}}
-#bellBtn.ring svg{animation:bellRing .6s ease;}
-
-/* ===== TODAY NOTIFICATION CARD ===== */
+}#section-agenda .bell-badge.show{display:flex;}
+@keyframes bellRing{0%,100%{transform:rotate(0);} 20%{transform:rotate(-12deg);} 40%{transform:rotate(10deg);} 60%{transform:rotate(-8deg);} 80%{transform:rotate(6deg);}}#section-agenda #bellBtn.ring svg{animation:bellRing .6s ease;}#section-agenda /* ===== TODAY NOTIFICATION CARD ===== */
 .today-notification{
   position:fixed; top:20px; right:20px; width:340px; max-width:90vw; background:var(--bg-elev);
   border:1px solid var(--line); border-radius:var(--radius-l); box-shadow:var(--shadow-pop); z-index:950;
   transform:translateX(120%) scale(.97); opacity:0; transition:transform .4s cubic-bezier(.2,.9,.25,1), opacity .3s ease;
   overflow:hidden;
-}
-.today-notification.show{transform:translateX(0) scale(1); opacity:1;}
-.tn-header{
+}#section-agenda .today-notification.show{transform:translateX(0) scale(1); opacity:1;}#section-agenda .tn-header{
   display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px;
   background:linear-gradient(135deg, var(--brand-navy-mid), var(--brand-navy) 70%); color:#fff;
-}
-.tn-title-wrap{display:flex; align-items:center; gap:8px;}
-.tn-bell{font-size:1.05rem;}
-.tn-header h3{margin:0; font-family:var(--font-display); font-size:.98rem; font-weight:700;}
-.tn-header .close-x{color:#dfe2f7;}
-.tn-body{max-height:320px; overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:8px;}
-.tn-item{
+}#section-agenda .tn-title-wrap{display:flex; align-items:center; gap:8px;}#section-agenda .tn-bell{font-size:1.05rem;}#section-agenda .tn-header h3{margin:0; font-family:var(--font-display); font-size:.98rem; font-weight:700;}#section-agenda .tn-header .close-x{color:#dfe2f7;}#section-agenda .tn-body{max-height:320px; overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:8px;}#section-agenda .tn-item{
   display:flex; gap:10px; align-items:flex-start; padding:9px 10px; border-radius:var(--radius-m); background:var(--bg-sunken);
   border:1px solid var(--line); cursor:pointer; transition:border-color .15s ease;
-}
-.tn-item:hover{border-color:var(--accent);}
-.tn-item .dot{width:9px; height:9px; border-radius:50%; margin-top:4px; flex-shrink:0;}
-.tn-item .tn-body-text{flex:1; min-width:0;}
-.tn-item .tn-title-line{display:flex; justify-content:space-between; gap:8px;}
-.tn-item .tn-title-line .t{font-weight:600; font-size:.82rem;}
-.tn-item .tn-title-line .time{font-family:var(--font-mono); font-size:.7rem; color:var(--text-faint); flex-shrink:0;}
-.tn-item .tn-tags{display:flex; gap:5px; margin-top:5px; flex-wrap:wrap;}
-.tn-footer{padding:12px 16px; border-top:1px solid var(--line); display:flex; gap:8px;}
-.tn-footer button{
+}#section-agenda .tn-item:hover{border-color:var(--accent);}#section-agenda .tn-item .dot{width:9px; height:9px; border-radius:50%; margin-top:4px; flex-shrink:0;}#section-agenda .tn-item .tn-body-text{flex:1; min-width:0;}#section-agenda .tn-item .tn-title-line{display:flex; justify-content:space-between; gap:8px;}#section-agenda .tn-item .tn-title-line .t{font-weight:600; font-size:.82rem;}#section-agenda .tn-item .tn-title-line .time{font-family:var(--font-mono); font-size:.7rem; color:var(--text-faint); flex-shrink:0;}#section-agenda .tn-item .tn-tags{display:flex; gap:5px; margin-top:5px; flex-wrap:wrap;}#section-agenda .tn-footer{padding:12px 16px; border-top:1px solid var(--line); display:flex; gap:8px;}#section-agenda .tn-footer button{
   flex:1; padding:9px; border-radius:18px; border:none; background:var(--ink-900); color:#fff;
   font-weight:600; font-size:.8rem; cursor:pointer;
-}
-[data-theme="dark"] .tn-footer button{background:var(--accent); color:var(--ink-900);}
-@media (max-width:480px){ .today-notification{left:12px; right:12px; width:auto; top:12px;} }
-
-/* ===== INDICATORS ===== */
-.indicators{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:16px;}
-.indicator{
+}#section-agenda[data-theme="dark"] .tn-footer button{background:var(--accent); color:var(--ink-900);}
+@media (max-width:480px){#section-agenda .today-notification{left:12px; right:12px; width:auto; top:12px;} }#section-agenda /* ===== INDICATORS ===== */
+.indicators{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:16px;}#section-agenda .indicator{
   background:var(--bg-elev); border:1px solid var(--line); border-radius:var(--radius-m);
   padding:12px 14px; box-shadow:var(--shadow-card);
-}
-.indicator .label{font-family:var(--font-mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); display:flex; align-items:center; gap:6px;}
-.indicator .value{font-family:var(--font-display); font-size:1.5rem; font-weight:600; margin-top:2px;}
-.indicator .value.small{font-size:.95rem; font-weight:500; font-family:var(--font-body);}
-
-/* ===== BANNER ===== */
+}#section-agenda .indicator .label{font-family:var(--font-mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); display:flex; align-items:center; gap:6px;}#section-agenda .indicator .value{font-family:var(--font-display); font-size:1.5rem; font-weight:600; margin-top:2px;}#section-agenda .indicator .value.small{font-size:.95rem; font-weight:500; font-family:var(--font-body);}#section-agenda /* ===== BANNER ===== */
 .banner{
   display:flex; align-items:center; gap:12px; background:linear-gradient(90deg, var(--accent-dark), var(--accent));
   color:#fff8ea; border-radius:var(--radius-m); padding:11px 16px; margin-bottom:18px; box-shadow:var(--shadow-card);
   font-size:.88rem; overflow:hidden;
-}
-.banner .banner-icon{flex-shrink:0; font-size:1.1rem;}
-.banner .banner-text{flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.banner .banner-close{cursor:pointer; opacity:.8; flex-shrink:0; background:none; border:none; color:inherit; font-size:1rem;}
-.banner .banner-close:hover{opacity:1;}
-.banner.hidden{display:none;}
-
-/* ===== TOOLBAR ===== */
-.toolbar{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px;}
-.month-nav{display:flex; align-items:center; gap:10px;}
-.month-nav .nav-btn{
+}#section-agenda .banner .banner-icon{flex-shrink:0; font-size:1.1rem;}#section-agenda .banner .banner-text{flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}#section-agenda .banner .banner-close{cursor:pointer; opacity:.8; flex-shrink:0; background:none; border:none; color:inherit; font-size:1rem;}#section-agenda .banner .banner-close:hover{opacity:1;}#section-agenda .banner.hidden{display:none;}#section-agenda /* ===== TOOLBAR ===== */
+.toolbar{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px;}#section-agenda .month-nav{display:flex; align-items:center; gap:10px;}#section-agenda .month-nav .nav-btn{
   width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--bg-elev); cursor:pointer;
   display:flex; align-items:center; justify-content:center; color:var(--text-dim); transition:all .2s;
-}
-.month-nav .nav-btn:hover{border-color:var(--accent); color:var(--accent-dark);}
-.month-title{font-family:var(--font-display); font-size:1.3rem; font-weight:600; min-width:200px; text-align:center; cursor:pointer;}
-.today-btn{
+}#section-agenda .month-nav .nav-btn:hover{border-color:var(--accent); color:var(--accent-dark);}#section-agenda .month-title{font-family:var(--font-display); font-size:1.3rem; font-weight:600; min-width:200px; text-align:center; cursor:pointer;}#section-agenda .today-btn{
   font-family:var(--font-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; padding:7px 12px;
   border-radius:20px; border:1px solid var(--line); background:var(--bg-elev); cursor:pointer; color:var(--text-dim);
-}
-.today-btn:hover{border-color:var(--accent); color:var(--accent-dark);}
-
-.view-switch{display:flex; background:var(--bg-sunken); border-radius:20px; padding:3px; border:1px solid var(--line);}
-.view-switch button{
+}#section-agenda .today-btn:hover{border-color:var(--accent); color:var(--accent-dark);}#section-agenda .view-switch{display:flex; background:var(--bg-sunken); border-radius:20px; padding:3px; border:1px solid var(--line);}#section-agenda .view-switch button{
   border:none; background:none; padding:6px 16px; border-radius:16px; cursor:pointer; font-size:.82rem; color:var(--text-dim);
   font-weight:500; transition:all .2s;
-}
-.view-switch button.active{background:var(--accent); color:#fff8ea; box-shadow:0 2px 8px rgba(0,0,0,.15);}
-
-.search-filter-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
-.search-box{position:relative; min-width:220px;}
-.search-box input{
+}#section-agenda .view-switch button.active{background:var(--accent); color:#fff8ea; box-shadow:0 2px 8px rgba(0,0,0,.15);}#section-agenda .search-filter-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}#section-agenda .search-box{position:relative; min-width:220px;}#section-agenda .search-box input{
   width:100%; padding:8px 12px 8px 32px; border-radius:20px; border:1px solid var(--line); background:var(--bg-elev);
   color:var(--text); font-size:.85rem; outline:none; transition:border .2s;
-}
-.search-box input:focus{border-color:var(--accent);}
-.search-box svg{position:absolute; left:10px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--text-faint);}
-.filter-toggle{
+}#section-agenda .search-box input:focus{border-color:var(--accent);}#section-agenda .search-box svg{position:absolute; left:10px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--text-faint);}#section-agenda .filter-toggle{
   display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:20px; border:1px solid var(--line);
   background:var(--bg-elev); cursor:pointer; font-size:.82rem; color:var(--text-dim); position:relative;
-}
-.filter-toggle.active-filters{border-color:var(--accent); color:var(--accent-dark);}
-.filter-toggle .count-badge{
+}#section-agenda .filter-toggle.active-filters{border-color:var(--accent); color:var(--accent-dark);}#section-agenda .filter-toggle .count-badge{
   background:var(--red); color:#fff; font-size:.65rem; font-family:var(--font-mono); border-radius:10px; padding:1px 6px; margin-left:2px;
-}
-.add-event-btn{
+}#section-agenda .add-event-btn{
   display:flex; align-items:center; gap:6px; padding:8px 16px; border-radius:20px; border:none;
   background:var(--ink-900); color:var(--paper-0); cursor:pointer; font-size:.83rem; font-weight:600;
   box-shadow:var(--shadow-card); transition:transform .2s;
-}
-[data-theme="dark"] .add-event-btn{background:var(--accent); color:var(--ink-900);}
-.add-event-btn:hover{transform:translateY(-1px);}
-
-/* ===== FILTER PANEL ===== */
+}#section-agenda[data-theme="dark"] .add-event-btn{background:var(--accent); color:var(--ink-900);}#section-agenda .add-event-btn:hover{transform:translateY(-1px);}#section-agenda /* ===== FILTER PANEL ===== */
 .filter-panel{
   max-height:0; overflow:hidden; transition:max-height .3s ease, margin .3s ease, padding .3s ease;
   background:var(--bg-elev); border-radius:var(--radius-m); border:1px solid var(--line); margin-bottom:0;
-}
-.filter-panel.open{max-height:320px; margin-bottom:16px; padding:16px;}
-.filter-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
-.filter-group h4{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); margin:0 0 8px;}
-.chip{
+}#section-agenda .filter-panel.open{max-height:320px; margin-bottom:16px; padding:16px;}#section-agenda .filter-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px;}#section-agenda .filter-group h4{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); margin:0 0 8px;}#section-agenda .chip{
   display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:16px; border:1px solid var(--line);
   font-size:.78rem; cursor:pointer; margin:0 6px 6px 0; background:var(--bg-sunken); color:var(--text-dim); transition:all .15s;
   user-select:none;
-}
-.chip.selected{background:var(--accent); border-color:var(--accent); color:#fff8ea;}
-.chip .dot{width:7px; height:7px; border-radius:50%; display:inline-block;}
-.filter-clear{font-size:.76rem; color:var(--text-faint); cursor:pointer; text-decoration:underline; background:none; border:none; margin-top:8px; font-family:inherit;}
-
-/* ===== CALENDAR GRID ===== */
-.calendar-wrap{background:var(--bg-elev); border-radius:var(--radius-l); border:1px solid var(--line); box-shadow:var(--shadow-card); overflow:hidden;}
-.day-panel-header{
+}#section-agenda .chip.selected{background:var(--accent); border-color:var(--accent); color:#fff8ea;}#section-agenda .chip .dot{width:7px; height:7px; border-radius:50%; display:inline-block;}#section-agenda .filter-clear{font-size:.76rem; color:var(--text-faint); cursor:pointer; text-decoration:underline; background:none; border:none; margin-top:8px; font-family:inherit;}#section-agenda /* ===== CALENDAR GRID ===== */
+.calendar-wrap{background:var(--bg-elev); border-radius:var(--radius-l); border:1px solid var(--line); box-shadow:var(--shadow-card); overflow:hidden;}#section-agenda .day-panel-header{
   display:flex; align-items:center; justify-content:space-between; gap:12px; padding:20px 22px;
   background:linear-gradient(135deg, var(--brand-navy-mid), var(--brand-navy) 75%); color:#fff;
-}
-.day-panel-header .dph-date{font-family:var(--font-display); font-weight:800; font-size:1.25rem; letter-spacing:-.01em;}
-.day-panel-header .dph-sub{font-family:var(--font-mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:#aab1e8; margin-top:3px;}
-.day-panel-header .dph-count{
+}#section-agenda .day-panel-header .dph-date{font-family:var(--font-display); font-weight:800; font-size:1.25rem; letter-spacing:-.01em;}#section-agenda .day-panel-header .dph-sub{font-family:var(--font-mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:#aab1e8; margin-top:3px;}#section-agenda .day-panel-header .dph-count{
   font-family:var(--font-mono); font-size:.72rem; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
   padding:5px 12px; border-radius:16px; white-space:nowrap;
-}
-.day-panel-header.is-today .dph-count{background:var(--brass); border-color:var(--brass); color:var(--ink-900); font-weight:700;}
-.day-panel-body{padding:16px; display:flex; flex-direction:column; gap:12px; min-height:220px;}
-.month-grid{display:grid; grid-template-columns:repeat(7,1fr); grid-auto-rows:minmax(92px,1fr);}
-.day-cell{
+}#section-agenda .day-panel-header.is-today .dph-count{background:var(--brass); border-color:var(--brass); color:var(--ink-900); font-weight:700;}#section-agenda .day-panel-body{padding:16px; display:flex; flex-direction:column; gap:12px; min-height:220px;}#section-agenda .month-grid{display:grid; grid-template-columns:repeat(7,1fr); grid-auto-rows:minmax(92px,1fr);}#section-agenda .day-cell{
   border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:6px 6px; position:relative; cursor:pointer;
   transition:background .15s ease; display:flex; flex-direction:column; gap:4px; outline:none;
-}
-.day-cell:nth-child(7n){border-right:none;}
-.day-cell:hover{background:var(--bg-sunken);}
-.day-cell:focus-visible{box-shadow:inset 0 0 0 2px var(--accent);}
-.day-cell.other-month{opacity:.35;}
-.day-cell.today{background:color-mix(in srgb, var(--accent) 10%, transparent);}
-.day-cell.today .day-num{color:var(--accent-dark); font-weight:700;}
-.day-num{font-family:var(--font-mono); font-size:.85rem; color:var(--text-dim); display:flex; align-items:center; gap:5px;}
-.day-cell.today .day-num::after{content:"HOJE"; font-size:.55rem; letter-spacing:.06em; background:var(--accent); color:#fff8ea; padding:1px 5px; border-radius:8px; font-family:var(--font-mono);}
-.event-chips{display:flex; flex-direction:column; gap:2px; overflow:hidden;}
-.event-chip-mini{
+}#section-agenda .day-cell:nth-child(7n){border-right:none;}#section-agenda .day-cell:hover{background:var(--bg-sunken);}#section-agenda .day-cell:focus-visible{box-shadow:inset 0 0 0 2px var(--accent);}#section-agenda .day-cell.other-month{opacity:.35;}#section-agenda .day-cell.today{background:color-mix(in srgb, var(--accent) 10%, transparent);}#section-agenda .day-cell.today .day-num{color:var(--accent-dark); font-weight:700;}#section-agenda .day-num{font-family:var(--font-mono); font-size:.85rem; color:var(--text-dim); display:flex; align-items:center; gap:5px;}#section-agenda .day-cell.today .day-num::after{content:"HOJE"; font-size:.55rem; letter-spacing:.06em; background:var(--accent); color:#fff8ea; padding:1px 5px; border-radius:8px; font-family:var(--font-mono);}#section-agenda .event-chips{display:flex; flex-direction:column; gap:2px; overflow:hidden;}#section-agenda .event-chip-mini{
   font-size:.66rem; padding:2px 5px; border-radius:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   color:#fff; display:flex; align-items:center; gap:3px; line-height:1.3;
-}
-.event-chip-mini.done{opacity:.5; text-decoration:line-through;}
-.event-chip-mini.overdue{outline:1px dashed rgba(255,255,255,.7); outline-offset:-1px;}
-.more-events{font-size:.64rem; color:var(--text-faint); font-family:var(--font-mono); padding-left:3px;}
-.day-count-badge{
+}#section-agenda .event-chip-mini.done{opacity:.5; text-decoration:line-through;}#section-agenda .event-chip-mini.overdue{outline:1px dashed rgba(255,255,255,.7); outline-offset:-1px;}#section-agenda .more-events{font-size:.64rem; color:var(--text-faint); font-family:var(--font-mono); padding-left:3px;}#section-agenda .day-count-badge{
   position:absolute; top:5px; right:6px; font-family:var(--font-mono); font-size:.62rem; background:var(--ink-900);
   color:var(--paper-0); border-radius:9px; padding:0 5px; min-width:15px; text-align:center;
-}
-[data-theme="dark"] .day-count-badge{background:var(--accent); color:var(--ink-900);}
-.day-cell.overdue-day .day-num{color:var(--red);}
-.day-cell.event-today-cell{animation:pulseToday 2.4s ease-in-out infinite;}
-@keyframes pulseToday{0%,100%{box-shadow:inset 0 0 0 0 rgba(184,67,58,0);} 50%{box-shadow:inset 0 0 0 2px rgba(184,67,58,.35);}}
-
-/* ===== TOOLTIP ===== */
+}#section-agenda[data-theme="dark"] .day-count-badge{background:var(--accent); color:var(--ink-900);}#section-agenda .day-cell.overdue-day .day-num{color:var(--red);}#section-agenda .day-cell.event-today-cell{animation:pulseToday 2.4s ease-in-out infinite;}
+@keyframes pulseToday{0%,100%{box-shadow:inset 0 0 0 0 rgba(184,67,58,0);} 50%{box-shadow:inset 0 0 0 2px rgba(184,67,58,.35);}}#section-agenda /* ===== TOOLTIP ===== */
 .day-tooltip{
   position:fixed; z-index:500; background:var(--ink-900); color:var(--paper-0); padding:10px 12px; border-radius:var(--radius-s);
   font-size:.76rem; max-width:230px; box-shadow:var(--shadow-pop); pointer-events:none; opacity:0; transform:translateY(4px);
   transition:opacity .15s ease, transform .15s ease;
-}
-.day-tooltip.show{opacity:1; transform:translateY(0);}
-.day-tooltip .tt-title{font-weight:600; margin-bottom:3px;}
-.day-tooltip .tt-meta{display:flex; gap:8px; color:#cfc7ae; flex-wrap:wrap; font-family:var(--font-mono); font-size:.68rem;}
-.day-tooltip .tt-more{margin-top:5px; color:#a89f86; font-size:.68rem;}
-
-/* ===== LIST / AGENDA VIEW ===== */
-.agenda-list{display:flex; flex-direction:column; gap:18px;}
-.agenda-group-label{
+}#section-agenda .day-tooltip.show{opacity:1; transform:translateY(0);}#section-agenda .day-tooltip .tt-title{font-weight:600; margin-bottom:3px;}#section-agenda .day-tooltip .tt-meta{display:flex; gap:8px; color:#cfc7ae; flex-wrap:wrap; font-family:var(--font-mono); font-size:.68rem;}#section-agenda .day-tooltip .tt-more{margin-top:5px; color:#a89f86; font-size:.68rem;}#section-agenda /* ===== LIST / AGENDA VIEW ===== */
+.agenda-list{display:flex; flex-direction:column; gap:18px;}#section-agenda .agenda-group-label{
   font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--text-faint);
   display:flex; align-items:center; gap:10px;
-}
-.agenda-group-label::after{content:""; flex:1; height:1px; background:var(--line);}
-.agenda-item{
+}#section-agenda .agenda-group-label::after{content:""; flex:1; height:1px; background:var(--line);}#section-agenda .agenda-item{
   display:flex; gap:12px; align-items:flex-start; background:var(--bg-elev); border:1px solid var(--line); border-radius:var(--radius-m);
   padding:12px 14px; box-shadow:var(--shadow-card); cursor:pointer; transition:transform .15s ease, border-color .15s ease;
-}
-.agenda-item:hover{transform:translateX(3px); border-color:var(--accent);}
-.agenda-item .prio-dot{width:10px; height:10px; border-radius:50%; margin-top:5px; flex-shrink:0;}
-.agenda-item .body{flex:1; min-width:0;}
-.agenda-item .row1{display:flex; justify-content:space-between; gap:10px; align-items:baseline;}
-.agenda-item .title{font-weight:600; font-size:.92rem;}
-.agenda-item .time{font-family:var(--font-mono); font-size:.75rem; color:var(--text-faint); flex-shrink:0;}
-.agenda-item .desc{font-size:.8rem; color:var(--text-dim); margin-top:3px;}
-.agenda-item .tags{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
-.tag{font-size:.66rem; font-family:var(--font-mono); padding:2px 8px; border-radius:10px; background:var(--bg-sunken); color:var(--text-dim); border:1px solid var(--line);}
-.tag.status-done{color:var(--green);}
-.tag.status-overdue{color:var(--red);}
-.empty-state{text-align:center; padding:60px 20px; color:var(--text-faint);}
-.empty-state .glyph{font-size:2.2rem; margin-bottom:10px;}
-
-/* ===== LEGEND ===== */
-.legend-bar{display:flex; gap:26px; flex-wrap:wrap; margin-top:20px; padding:14px 16px; background:var(--bg-elev); border:1px solid var(--line); border-radius:var(--radius-m);}
-.legend-group{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
-.legend-group .lg-label{font-family:var(--font-mono); font-size:.66rem; text-transform:uppercase; color:var(--text-faint); letter-spacing:.06em; margin-right:2px;}
-.legend-item{display:flex; align-items:center; gap:5px; font-size:.78rem; color:var(--text-dim);}
-.legend-item .dot{width:9px; height:9px; border-radius:50%;}
-
-/* ===== DRAWER ===== */
-.ag-overlay{position:fixed; inset:0; background:rgba(16,29,48,.45); z-index:700; opacity:0; pointer-events:none; transition:opacity .3s ease;}
-.ag-overlay.show{opacity:1; pointer-events:auto;}
-.drawer{
+}#section-agenda .agenda-item:hover{transform:translateX(3px); border-color:var(--accent);}#section-agenda .agenda-item .prio-dot{width:10px; height:10px; border-radius:50%; margin-top:5px; flex-shrink:0;}#section-agenda .agenda-item .body{flex:1; min-width:0;}#section-agenda .agenda-item .row1{display:flex; justify-content:space-between; gap:10px; align-items:baseline;}#section-agenda .agenda-item .title{font-weight:600; font-size:.92rem;}#section-agenda .agenda-item .time{font-family:var(--font-mono); font-size:.75rem; color:var(--text-faint); flex-shrink:0;}#section-agenda .agenda-item .desc{font-size:.8rem; color:var(--text-dim); margin-top:3px;}#section-agenda .agenda-item .tags{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}#section-agenda .tag{font-size:.66rem; font-family:var(--font-mono); padding:2px 8px; border-radius:10px; background:var(--bg-sunken); color:var(--text-dim); border:1px solid var(--line);}#section-agenda .tag.status-done{color:var(--green);}#section-agenda .tag.status-overdue{color:var(--red);}#section-agenda .empty-state{text-align:center; padding:60px 20px; color:var(--text-faint);}#section-agenda .empty-state .glyph{font-size:2.2rem; margin-bottom:10px;}#section-agenda /* ===== LEGEND ===== */
+.legend-bar{display:flex; gap:26px; flex-wrap:wrap; margin-top:20px; padding:14px 16px; background:var(--bg-elev); border:1px solid var(--line); border-radius:var(--radius-m);}#section-agenda .legend-group{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}#section-agenda .legend-group .lg-label{font-family:var(--font-mono); font-size:.66rem; text-transform:uppercase; color:var(--text-faint); letter-spacing:.06em; margin-right:2px;}#section-agenda .legend-item{display:flex; align-items:center; gap:5px; font-size:.78rem; color:var(--text-dim);}#section-agenda .legend-item .dot{width:9px; height:9px; border-radius:50%;}#section-agenda /* ===== DRAWER ===== */
+.ag-overlay{position:fixed; inset:0; background:rgba(16,29,48,.45); z-index:700; opacity:0; pointer-events:none; transition:opacity .3s ease;}#section-agenda .ag-overlay.show{opacity:1; pointer-events:auto;}#section-agenda .drawer{
   position:fixed; top:0; right:0; height:100%; width:420px; max-width:92vw; background:var(--bg-elev); z-index:800;
   box-shadow:var(--shadow-pop); transform:translateX(100%); transition:transform .32s cubic-bezier(.2,.9,.25,1);
   display:flex; flex-direction:column; border-left:1px solid var(--line);
-}
-.drawer.show{transform:translateX(0);}
-.drawer-header{display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--line);}
-.drawer-header h3{font-family:var(--font-display); font-size:1.15rem; margin:0;}
-.close-x{cursor:pointer; background:none; border:none; color:var(--text-dim); font-size:1.3rem; line-height:1; padding:2px;}
-.drawer-body{padding:16px 20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:14px;}
-.event-card{background:var(--bg-sunken); border:1px solid var(--line); border-radius:var(--radius-m); padding:14px; position:relative;}
-.event-card .stamp{position:absolute; top:10px; right:10px;}
-.event-card h4{margin:0 0 6px; font-size:.98rem; padding-right:60px;}
-.event-card .meta-row{display:flex; gap:10px; flex-wrap:wrap; font-family:var(--font-mono); font-size:.72rem; color:var(--text-faint); margin-bottom:8px;}
-.event-card p.desc{font-size:.82rem; color:var(--text-dim); margin:0 0 10px;}
-.event-card .actions{display:flex; gap:8px; flex-wrap:wrap;}
-.event-card .actions button{
+}#section-agenda .drawer.show{transform:translateX(0);}#section-agenda .drawer-header{display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--line);}#section-agenda .drawer-header h3{font-family:var(--font-display); font-size:1.15rem; margin:0;}#section-agenda .close-x{cursor:pointer; background:none; border:none; color:var(--text-dim); font-size:1.3rem; line-height:1; padding:2px;}#section-agenda .drawer-body{padding:16px 20px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:14px;}#section-agenda .event-card{background:var(--bg-sunken); border:1px solid var(--line); border-radius:var(--radius-m); padding:14px; position:relative;}#section-agenda .event-card .stamp{position:absolute; top:10px; right:10px;}#section-agenda .event-card h4{margin:0 0 6px; font-size:.98rem; padding-right:60px;}#section-agenda .event-card .meta-row{display:flex; gap:10px; flex-wrap:wrap; font-family:var(--font-mono); font-size:.72rem; color:var(--text-faint); margin-bottom:8px;}#section-agenda .event-card p.desc{font-size:.82rem; color:var(--text-dim); margin:0 0 10px;}#section-agenda .event-card .actions{display:flex; gap:8px; flex-wrap:wrap;}#section-agenda .event-card .actions button{
   font-size:.74rem; padding:6px 11px; border-radius:14px; border:1px solid var(--line); background:var(--bg-elev);
   cursor:pointer; color:var(--text-dim); display:flex; align-items:center; gap:4px; transition:all .15s;
-}
-.event-card .actions button:hover{border-color:var(--accent); color:var(--accent-dark);}
-.event-card .actions button.danger:hover{border-color:var(--red); color:var(--red);}
-.event-card .actions button.success:hover{border-color:var(--green); color:var(--green);}
-.drawer-footer{padding:14px 20px; border-top:1px solid var(--line);}
-.drawer-footer button{
+}#section-agenda .event-card .actions button:hover{border-color:var(--accent); color:var(--accent-dark);}#section-agenda .event-card .actions button.danger:hover{border-color:var(--red); color:var(--red);}#section-agenda .event-card .actions button.success:hover{border-color:var(--green); color:var(--green);}#section-agenda .drawer-footer{padding:14px 20px; border-top:1px solid var(--line);}#section-agenda .drawer-footer button{
   width:100%; padding:10px; border-radius:20px; border:none; background:var(--ink-900); color:var(--paper-0);
   font-weight:600; cursor:pointer; font-size:.85rem;
-}
-[data-theme="dark"] .drawer-footer button{background:var(--accent); color:var(--ink-900);}
-
-/* ===== MODAL FORM ===== */
+}#section-agenda[data-theme="dark"] .drawer-footer button{background:var(--accent); color:var(--ink-900);}#section-agenda /* ===== MODAL FORM ===== */
 .modal{
   position:fixed; top:50%; left:50%; transform:translate(-50%,-48%) scale(.96); width:460px; max-width:92vw;
   background:var(--bg-elev); border-radius:var(--radius-l); z-index:900; box-shadow:var(--shadow-pop); opacity:0; pointer-events:none;
   transition:all .25s ease; max-height:88vh; display:flex; flex-direction:column;
-}
-.modal.show{opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1);}
-.modal-header{padding:18px 20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
-.modal-header h3{margin:0; font-family:var(--font-display); font-size:1.1rem;}
-.modal-body{padding:18px 20px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;}
-.form-row{display:flex; flex-direction:column; gap:5px;}
-.form-row label{font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); font-family:var(--font-mono);}
-.form-row input, .form-row textarea, .form-row select{
+}#section-agenda .modal.show{opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1);}#section-agenda .modal-header{padding:18px 20px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}#section-agenda .modal-header h3{margin:0; font-family:var(--font-display); font-size:1.1rem;}#section-agenda .modal-body{padding:18px 20px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;}#section-agenda .form-row{display:flex; flex-direction:column; gap:5px;}#section-agenda .form-row label{font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); font-family:var(--font-mono);}#section-agenda .form-row input, #section-agenda .form-row textarea, #section-agenda .form-row select{
   padding:9px 11px; border-radius:8px; border:1px solid var(--line); background:var(--bg-sunken); color:var(--text); font-size:.85rem; font-family:inherit; outline:none;
-}
-.form-row input:focus, .form-row textarea:focus, .form-row select:focus{border-color:var(--accent);}
-.form-row-inline{display:flex; gap:10px;}
-.form-row-inline .form-row{flex:1;}
-.color-swatches{display:flex; gap:8px;}
-.color-swatches span{width:26px; height:26px; border-radius:50%; cursor:pointer; border:2px solid transparent; display:inline-block;}
-.color-swatches span.selected{border-color:var(--text);}
-.modal-footer{padding:16px 20px; border-top:1px solid var(--line); display:flex; gap:10px;}
-.modal-footer button{flex:1; padding:10px; border-radius:20px; font-weight:600; cursor:pointer; font-size:.85rem;}
-.btn-primary{border:none; background:var(--ink-900); color:var(--paper-0);}
-[data-theme="dark"] .btn-primary{background:var(--accent); color:var(--ink-900);}
-.btn-secondary{border:1px solid var(--line); background:none; color:var(--text-dim);}
-
-/* ===== TOAST ===== */
+}#section-agenda .form-row input:focus, #section-agenda .form-row textarea:focus, #section-agenda .form-row select:focus{border-color:var(--accent);}#section-agenda .form-row-inline{display:flex; gap:10px;}#section-agenda .form-row-inline .form-row{flex:1;}#section-agenda .color-swatches{display:flex; gap:8px;}#section-agenda .color-swatches span{width:26px; height:26px; border-radius:50%; cursor:pointer; border:2px solid transparent; display:inline-block;}#section-agenda .color-swatches span.selected{border-color:var(--text);}#section-agenda .modal-footer{padding:16px 20px; border-top:1px solid var(--line); display:flex; gap:10px;}#section-agenda .modal-footer button{flex:1; padding:10px; border-radius:20px; font-weight:600; cursor:pointer; font-size:.85rem;}#section-agenda .btn-primary{border:none; background:var(--ink-900); color:var(--paper-0);}#section-agenda[data-theme="dark"] .btn-primary{background:var(--accent); color:var(--ink-900);}#section-agenda .btn-secondary{border:1px solid var(--line); background:none; color:var(--text-dim);}#section-agenda /* ===== TOAST ===== */
 .toast{
   position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink-900); color:var(--paper-0);
   padding:11px 20px; border-radius:24px; font-size:.82rem; z-index:1000; opacity:0; transition:all .3s ease; box-shadow:var(--shadow-pop);
   display:flex; align-items:center; gap:8px;
-}
-.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
-
-/* ===== UTILITY ===== */
-.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);}
-.footer-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:16px; flex-wrap:wrap;}
-.footer-actions button{
+}#section-agenda .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}#section-agenda /* ===== UTILITY ===== */
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);}#section-agenda .footer-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:16px; flex-wrap:wrap;}#section-agenda .footer-actions button{
   display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:18px; border:1px solid var(--line);
   background:var(--bg-elev); cursor:pointer; font-size:.78rem; color:var(--text-dim);
-}
-.footer-actions button:hover{border-color:var(--accent); color:var(--accent-dark);}
+}#section-agenda .footer-actions button:hover{border-color:var(--accent); color:var(--accent-dark);}
 
-@media print{
-  body{background:#fff; background-image:none;}
-  .masthead .header-actions, .toolbar, .filter-panel, .banner, .footer-actions, .indicators{display:none !important;}
-  .calendar-wrap{box-shadow:none; border:1px solid #ccc;}
+@media print{#section-agenda .app{background:#fff; background-image:none;}#section-agenda .masthead .header-actions, #section-agenda .toolbar, #section-agenda .filter-panel, #section-agenda .banner, #section-agenda .footer-actions, #section-agenda .indicators{display:none !important;}#section-agenda .calendar-wrap{box-shadow:none; border:1px solid #ccc;}
 }
 
-@media (max-width:820px){
-  .indicators{grid-template-columns:repeat(2,1fr);}
-  .drawer{width:100%; max-width:100%;}
-  .day-cell{min-height:70px;}
-  .month-grid{grid-auto-rows:minmax(70px,1fr);}
-  .event-chip-mini{font-size:.6rem;}
+@media (max-width:820px){#section-agenda .indicators{grid-template-columns:repeat(2,1fr);}#section-agenda .drawer{width:100%; max-width:100%;}#section-agenda .day-cell{min-height:70px;}#section-agenda .month-grid{grid-auto-rows:minmax(70px,1fr);}#section-agenda .event-chip-mini{font-size:.6rem;}
 }
-@media (max-width:480px){
-  .indicators{grid-template-columns:repeat(2,1fr);}
-  .indicator .value{font-size:1.2rem;}
-  .toolbar{gap:8px;}
-  .search-box{min-width:100%;}
+@media (max-width:480px){#section-agenda .indicators{grid-template-columns:repeat(2,1fr);}#section-agenda .indicator .value{font-size:1.2rem;}#section-agenda .toolbar{gap:8px;}#section-agenda .search-box{min-width:100%;}
 }
-@media (prefers-reduced-motion: reduce){
-  *{animation:none !important; transition:none !important;}
+@media (prefers-reduced-motion: reduce){#section-agenda *{animation:none !important; transition:none !important;}
 }
 
   </style>
@@ -480,6 +370,23 @@ button{font-family:inherit;}
 </button>
 
 <div class="main">
+  <header class="topbar topbar-hidden" id="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="topbar-title" id="topbar-title">Portal de Acessos</span>
+    </div>
+    <button class="topbar-badge-btn" id="topbar-destaque-btn" onclick="openModal()">
+      <span class="badge-dot"></span>
+      Portal Ativo
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </header>
+
+  <main class="content content-flush">
+
+    <!-- HOME -->
+    <section class="section active" id="section-home">
+      <div id="section-agenda" data-theme="light">
+
 
 <div class="app">
 
@@ -1183,9 +1090,9 @@ calWrap.addEventListener('touchend', e=>{
 
 /* ================= THEME ================= */
 document.getElementById('themeToggle').addEventListener('click', ()=>{
-  const body = document.body;
-  const isDark = body.getAttribute('data-theme')==='dark';
-  body.setAttribute('data-theme', isDark? 'light':'dark');
+  const agendaRoot = document.getElementById('section-agenda');
+  const isDark = agendaRoot.getAttribute('data-theme')==='dark';
+  agendaRoot.setAttribute('data-theme', isDark? 'light':'dark');
 });
 
 /* ================= PRINT / EXPORT / IMPORT ================= */
@@ -1260,9 +1167,497 @@ window.addEventListener('load', ()=>{
 })();
 </script>
 
+      </div>
+
+    </section>
+
+    <!-- RECEITA FEDERAL -->
+    <section class="section" id="section-receita">
+      <div class="section-header"><h2>Receita Federal</h2><p>Serviços e portais da Receita Federal do Brasil</p></div>
+      <div class="cards-grid">
+        <a href="https://cav.receita.fazenda.gov.br/autenticacao/login" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-receita federal.png" alt="e-CAC"/></div>
+          <span class="card-name">e-CAC</span><span class="card-tag">Receita</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://solucoes.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-receita federal.png" alt="CNPJ"/></div>
+          <span class="card-name">Consulta CNPJ</span><span class="card-tag">Receita</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.gov.br/empresas-e-negocios/pt-br/redesim/comprovantes" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-receita federal.png" alt="Redesim"/></div>
+          <span class="card-name">Consulta Redesim</span><span class="card-tag">Receita</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://fgtsdigiten.sistema.gov.br/portal/login" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-receita federal.png" alt="FGTS Digital"/></div>
+          <span class="card-name">FGTS Digital</span><span class="card-tag">Receita</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://login.esocial.gov.br/login.aspx" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-receita federal.png" alt="e-Social"/></div>
+          <span class="card-name">e-Social</span><span class="card-tag">Receita</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www8.receita.fazenda.gov.br/simplesnacional/aplicacoes.aspx?id=21" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-receita federal.png" alt="Simples Nacional"/></div>
+          <span class="card-name">Consulta Optante</span><span class="card-tag">Simples Nacional</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- SEFAZ -->
+    <section class="section" id="section-sefaz">
+      <div class="section-header"><h2>Sefaz Alagoas</h2><p>Serviços da Secretaria da Fazenda do Estado de Alagoas</p></div>
+      <div class="cards-grid">
+        <a href="https://contribuinte.sefaz.al.gov.br/#/" target="_blank" class="card">
+          <div class="card-icon"><img src="./Logo sefaz al.png" alt="Sefaz"/></div>
+          <span class="card-name">Portal do Contribuinte</span><span class="card-tag">Sefaz AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://portal-dar.sefaz.al.gov.br/#/home" target="_blank" class="card">
+          <div class="card-icon"><img src="./Logo sefaz al.png" alt="DAR"/></div>
+          <span class="card-name">DAR — 2ª Via</span><span class="card-tag">Sefaz AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://sei.al.gov.br/sei/controlador_externo.php?acao=usuario_externo_logar&id_orgao_acesso_externo=0" target="_blank" class="card">
+          <div class="card-icon"><img src="./Logo sefaz al.png" alt="SEI"/></div>
+          <span class="card-name">Portal SEI</span><span class="card-tag">Sefaz AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.sefaz.al.gov.br/nise" target="_blank" class="card">
+          <div class="card-icon"><img src="./Logo sefaz al.png" alt="NISE"/></div>
+          <span class="card-name">NISE</span><span class="card-tag">Sefaz AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://cadastro.sefaz.al.gov.br/#/ficha-cadastral" target="_blank" class="card">
+          <div class="card-icon"><img src="./Logo sefaz al.png" alt="CACEAL"/></div>
+          <span class="card-name">CACEAL</span><span class="card-tag">Cadastro</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://cadsinc.sefaz.al.gov.br/Inicializacao.do" target="_blank" class="card">
+          <div class="card-icon"><img src="./Logo sefaz al.png" alt="Cadastro Sinc"/></div>
+          <span class="card-name">Cadastro Sincronizado</span><span class="card-tag">Sefaz AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- PREFEITURAS -->
+    <section class="section" id="section-prefeitura">
+      <div class="section-header"><h2>Prefeituras</h2><p>Acesso direto aos portais de NFS-e dos municípios atendidos</p></div>
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar município..." oninput="filterCards('prefeitura', this.value)"/>
+      </div>
+      <div class="cards-grid" id="grid-prefeitura">
+        <a href="https://nfe-saosebastiao.prefeitura.info/" target="_blank" class="card" data-name="são sebastião">
+          <div class="card-icon"><img src="./brasao-sao sebastiao.png" alt="São Sebastião"/></div>
+          <span class="card-name">São Sebastião</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://nfe-junqueiro.prefeitura.info/" target="_blank" class="card" data-name="junqueiro">
+          <div class="card-icon"><img src="./brasao-junqueiro.png" alt="Junqueiro"/></div>
+          <span class="card-name">Junqueiro</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://municipioonline.com.br/al/prefeitura/teotoniovilela/contribuinte" target="_blank" class="card" data-name="teotônio vilela">
+          <div class="card-icon"><img src="./Brasão-teotonio.png" alt="Teotônio Vilela"/></div>
+          <span class="card-name">Teotônio Vilela</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.municipioonline.com.br/al/prefeitura/campoalegre/contribuinte" target="_blank" class="card" data-name="campo alegre">
+          <div class="card-icon"><img src="./brasao-compo alegre.png" alt="Campo Alegre"/></div>
+          <span class="card-name">Campo Alegre</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="http://nfe-coruripe.midassoftware.com.br/" target="_blank" class="card" data-name="coruripe">
+          <div class="card-icon"><img src="./brasao-coruripe.jpg" alt="Coruripe"/></div>
+          <span class="card-name">Coruripe</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://penedo.al.gov.br/" target="_blank" class="card" data-name="penedo">
+          <div class="card-icon"><img src="./brasao-penedo.png" alt="Penedo"/></div>
+          <span class="card-name">Penedo</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.e-nfs.com.br/arapiraca/portal/#!#loginususenha" target="_blank" class="card" data-name="arapiraca">
+          <div class="card-icon"><img src="./brasao-arapiraca.png" alt="Arapiraca"/></div>
+          <span class="card-name">Arapiraca</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://maceio.giss.com.br/portal/#/login-portal" target="_blank" class="card" data-name="maceió">
+          <div class="card-icon"><img src="./brasao-maceio.png" alt="Maceió"/></div>
+          <span class="card-name">Maceió</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.kalana.com.br/login" target="_blank" class="card" data-name="igreja nova">
+          <div class="card-icon"><img src="./brasao-igreja nova.png" alt="Igreja Nova"/></div>
+          <span class="card-name">Igreja Nova</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://app.kalana.com.br/?c=12242350000143&r=portal&u=0000" target="_blank" class="card" data-name="igreja nova tlf">
+          <div class="card-icon"><img src="./brasao-igreja nova.png" alt="Igreja Nova TLF"/></div>
+          <span class="card-name">Igreja Nova T.L.F</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://jacaredoshomens.nfse.srv.br/auth/login/" target="_blank" class="card" data-name="jacaré dos homens">
+          <div class="card-icon"><img src="./brasao-jacare.jfif" alt="Jacaré dos Homens"/></div>
+          <span class="card-name">Jacaré dos Homens</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://nfe-smc.prefeitura.info/" target="_blank" class="card" data-name="são miguel dos campos">
+          <div class="card-icon"><img src="./SAO MIGUEL DOS CAMPOS.png" alt="São Miguel dos Campos"/></div>
+          <span class="card-name">São Miguel dos Campos</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://olhodaguadasflores.al.gov.br/" target="_blank" class="card" data-name="olho d'água das flores">
+          <div class="card-icon"><img src="./brasao-olho d'água das flores.png" alt="Olho D'Água"/></div>
+          <span class="card-name">Olho D'Água das Flores</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://campogrande.al.gov.br/" target="_blank" class="card" data-name="campo grande">
+          <div class="card-icon"><img src="./brasao-campo grande.png" alt="Campo Grande"/></div>
+          <span class="card-name">Campo Grande</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.portalcidadao.net/tributos/" target="_blank" class="card" data-name="são josé da laje">
+          <div class="card-icon"><img src="./brasao-sao jose da laje.png" alt="São José da Laje"/></div>
+          <span class="card-name">São José da Laje</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.belomonte.al.gov.br/servicos/Nota-Fiscal-Eletronica" target="_blank" class="card" data-name="belo monte">
+          <div class="card-icon"><img src="./brasao-belo monte.jfif" alt="Belo Monte"/></div>
+          <span class="card-name">Belo Monte</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="http://www.igbsoftwares.com.br:9001/" target="_blank" class="card" data-name="batalha">
+          <div class="card-icon"><img src="./logo batalha.jpg" alt="Batalha"/></div>
+          <span class="card-name">Batalha</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="http://gestao.cegep.inf.br:5661/servicosweb/home.jsf" target="_blank" class="card" data-name="girau do ponciano">
+          <div class="card-icon"><img src="./girau do ponciano.png" alt="Girau do Ponciano"/></div>
+          <span class="card-name">Girau do Ponciano</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://limoeirodeanadia.nfse.srv.br/auth/login" target="_blank" class="card" data-name="limoeiro de anadia">
+          <div class="card-icon"><img src="./brasao limoreiro.jfif" alt="Limoeiro de Anadia"/></div>
+          <span class="card-name">Limoeiro de Anadia</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.tinus.com.br/csp/mossoro/portal/index.csp" target="_blank" class="card" data-name="mossoró">
+          <div class="card-icon"><img src="./brasao mossoro.jpg" alt="Mossoró"/></div>
+          <span class="card-name">Mossoró RN</span><span class="card-tag">Rio Grande do Norte</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.kalana.com.br/login" target="_blank" class="card" data-name="taquarana">
+          <div class="card-icon"><img src="./brasao-taquarana.jfif" alt="Taquarana"/></div>
+          <span class="card-name">Taquarana</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://nfe-piacabucu.prefeitura.info/" target="_blank" class="card" data-name="piaçabuçu">
+          <div class="card-icon"><img src="./Brasão_Piaçabuçu.png" alt="Piaçabuçu"/></div>
+          <span class="card-name">Piaçabuçu</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://site.portorealdocolegio.al.gov.br/#" target="_blank" class="card" data-name="porto real do colégio">
+          <div class="card-icon"><img src="./logo prefeitura de porto real de colegio.jpg" alt="Porto Real do Colégio"/></div>
+          <span class="card-name">Porto Real do Colégio</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.craibas.al.gov.br/" target="_blank" class="card" data-name="craíbas">
+          <div class="card-icon"><img src="./logo prefeitura de craibas.jpg" alt="Craíbas"/></div>
+          <span class="card-name">Craíbas</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://gestor.tributosmunicipais.com.br/redesim/views/publico/index.xhtml" target="_blank" class="card" data-name="capela">
+          <div class="card-icon"><img src="./capela.jpg" alt="Capela"/></div>
+          <span class="card-name">Capela</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.tributosmunicipais.com.br/NFE-bocadamata/loginAction.do" target="_blank" class="card" data-name="boca da mata">
+          <div class="card-icon"><img src="./logo_boca da mata.jpg" alt="Boca da Mata"/></div>
+          <span class="card-name">Boca da Mata</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://delmirogouveia.al.gov.br/" target="_blank" class="card" data-name="delmiro gouveia">
+          <div class="card-icon"><img src="./logo delmiro.png" alt="Delmiro Gouveia"/></div>
+          <span class="card-name">Delmiro Gouveia</span><span class="card-tag">Alagoas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- CERTIDÕES -->
+    <section class="section" id="section-certidao">
+      <div class="section-header"><h2>Certidões</h2><p>Emissão de certidões negativas e de regularidade fiscal</p></div>
+      <div class="cards-grid">
+        <a href="https://servicos.receitafederal.gov.br/servico/certidoes/#/home/cnpj" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-receita federal.png" alt="Receita Federal"/></div>
+          <span class="card-name">Certidão Federal</span><span class="card-tag">Receita Federal</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://contribuinte.sefaz.al.gov.br/certidao/#/emitir-certidao" target="_blank" class="card">
+          <div class="card-icon"><img src="./Logo sefaz al.png" alt="Sefaz AL"/></div>
+          <span class="card-name">Certidão Estadual</span><span class="card-tag">Sefaz AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://consulta-crf.caixa.gov.br/consultacrf/pages/consultaEmpregador.jsf" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-fgts.jfif" alt="FGTS"/></div>
+          <span class="card-name">Certidão FGTS</span><span class="card-tag">Caixa</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://cndt-certidao.tst.jus.br/inicio.faces" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-ministerio do trabalho.png" alt="TST"/></div>
+          <span class="card-name">Certidão Trabalhista</span><span class="card-tag">TST</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www2.tjal.jus.br/sco/abrirCadastro.do" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo-tj.png" alt="TJAL"/></div>
+          <span class="card-name">Certidão Falência</span><span class="card-tag">TJAL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.facilita.al.gov.br/acoes/certidao" target="_blank" class="card">
+          <div class="card-icon"><img src="./facilitaa al.png" alt="Facilita AL"/></div>
+          <span class="card-name">Certidão Simplificada</span><span class="card-tag">Facilita AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://nadaconsta.prf.gov.br/nada_consta/index.jsf" target="_blank" class="card">
+          <div class="card-icon"><img src="./brasao prf.jpg" alt="PRF"/></div>
+          <span class="card-name">Certidão PRF</span><span class="card-tag">PRF</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="#" onclick="goTo('prefeitura');return false;" class="card">
+          <div class="card-icon"><img src="./brasao-sao sebastiao.png" alt="Municipais"/></div>
+          <span class="card-name">Certidões Municipais</span><span class="card-tag">Prefeituras</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://certidao-unificada.cjf.jus.br/#/solicitacao-certidao" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo cjf.jpg" alt="CJF"/></div>
+          <span class="card-name">Certidão Criminal Federal</span><span class="card-tag">CJF</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://contas.tcu.gov.br/ords/f?p=1660:3:0" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo tcu.jpg" alt="TCU"/></div>
+          <span class="card-name">Certidão TCU</span><span class="card-tag">Tribunal de Contas</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- SISTEMAS -->
+    <section class="section" id="section-sistemas">
+      <div class="section-header"><h2>Sistemas</h2><p>Plataformas e sistemas contábeis, fiscais e de gestão</p></div>
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar sistema..." oninput="filterCards('sistemas', this.value)"/>
+      </div>
+      <div class="cards-grid" id="grid-sistemas">
+        <a href="https://login.tagplus.com.br/login/lembrar-sistema" target="_blank" class="card" data-name="tagplus">
+          <div class="card-icon"><img src="./logo tagplus.png" alt="TagPlus"/></div>
+          <span class="card-name">TagPlus</span><span class="card-tag">ERP</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://portalterceiros.app.usinacaete.com/telalogin.php" target="_blank" class="card" data-name="usina marituba">
+          <div class="card-icon"><img src="./logo grupo lyra" alt="Usina Marituba"/></div>
+          <span class="card-name">Usina Marituba</span><span class="card-tag">Portal</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.bling.com.br/login" target="_blank" class="card" data-name="bling">
+          <div class="card-icon"><img src="./logo-bling.webp" alt="Bling"/></div>
+          <span class="card-name">Bling</span><span class="card-tag">ERP</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.online.maceio.al.gov.br/n/ostic/index.php" target="_blank" class="card" data-name="ticker maceió">
+          <div class="card-icon"><img src="./brasao-maceio.png" alt="Ticker Maceió"/></div>
+          <span class="card-name">Ticker Maceió</span><span class="card-tag">Maceió</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.nfse.gov.br/EmissorNacional/Login" target="_blank" class="card" data-name="nfs-e mei">
+          <div class="card-icon"><img src="./logoNFSE-MEI.jpg" alt="NFS-e MEI"/></div>
+          <span class="card-name">NFS-e MEI</span><span class="card-tag">Nacional</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://nfae.sefaz.al.gov.br/sca_default_login_page" target="_blank" class="card" data-name="nota fiscal avulsa">
+          <div class="card-icon"><img src="./logonotafiscalavulsa.jpg" alt="NFA"/></div>
+          <span class="card-name">Nota Fiscal Avulsa</span><span class="card-tag">Sefaz AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.emissorweb.com.br/principal.php" target="_blank" class="card" data-name="emissor web">
+          <div class="card-icon"><img src="./logo emissor web.jpg" alt="Emissor Web"/></div>
+          <span class="card-name">Emissor Web</span><span class="card-tag">NF-e</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://nfe.treeunfe.me/#/auth/sign-in" target="_blank" class="card" data-name="free nf-e">
+          <div class="card-icon"><img src="./logoFreeNFe.png" alt="Free NF-e"/></div>
+          <span class="card-name">Free NF-e</span><span class="card-tag">NF-e</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://amei.sebrae.com.br/auth/realms/externo/protocol/openid-connect/auth" target="_blank" class="card" data-name="sebrae">
+          <div class="card-icon"><img src="./logo sebrae.png" alt="Sebrae"/></div>
+          <span class="card-name">Sebrae Emissor</span><span class="card-tag">NF-e</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://dfe-portal.svrs.rs.gov.br/NFCe" target="_blank" class="card" data-name="consulta nfc-e">
+          <div class="card-icon"><img src="./logo_NFCe.png" alt="NFC-e"/></div>
+          <span class="card-name">Consulta NFC-e</span><span class="card-tag">SVRS</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://nfce.sefaz.al.gov.br/consultanfce.htm" target="_blank" class="card" data-name="nfc-e alagoas">
+          <div class="card-icon"><img src="./logo_NFCe.png" alt="NFC-e AL"/></div>
+          <span class="card-name">NFC-e Alagoas</span><span class="card-tag">Sefaz AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.fsist.com.br/" target="_blank" class="card" data-name="fsist">
+          <div class="card-icon"><img src="./logofsist.jpg" alt="Fsist"/></div>
+          <span class="card-name">Fsist</span><span class="card-tag">Sistema</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="http://www.sped.fazenda.gov.br/spedfiscalserver/ConsultaContribuinte/Default.aspx" target="_blank" class="card" data-name="sped fiscal">
+          <div class="card-icon"><img src="./logosped.jpg" alt="SPED"/></div>
+          <span class="card-name">SPED Fiscal</span><span class="card-tag">Receita</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.sieg.com/" target="_blank" class="card" data-name="sieg">
+          <div class="card-icon"><img src="./logo sieg.png" alt="Sieg"/></div>
+          <span class="card-name">Sieg</span><span class="card-tag">XML / NF-e</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.econeteditora.com.br/novo/" target="_blank" class="card" data-name="econet">
+          <div class="card-icon"><img src="./logo econet.png" alt="Econet"/></div>
+          <span class="card-name">Econet</span><span class="card-tag">Legislação</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://servicos.mte.gov.br/spme-v2/#/login" target="_blank" class="card" data-name="carteira de trabalho">
+          <div class="card-icon"><img src="./carteira de trabalho.jpg" alt="Carteira de Trabalho"/></div>
+          <span class="card-name">Carteira de Trabalho</span><span class="card-tag">MTE</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://sso.acesso.gov.br/login" target="_blank" class="card" data-name="gov.br">
+          <div class="card-icon"><img src="./logo Gov.png" alt="Gov.br"/></div>
+          <span class="card-name">Gov.br</span><span class="card-tag">Portal</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://sicalc.receita.economia.gov.br/sicalc/principal" target="_blank" class="card" data-name="sicalc">
+          <div class="card-icon"><img src="./log receita.jpg" alt="Sicalc"/></div>
+          <span class="card-name">Sicalc Web</span><span class="card-tag">Receita</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://prime.mcsistem.app.br/sistema/" target="_blank" class="card" data-name="mcsistem">
+          <div class="card-icon"><img src="./mcsistem.jpg" alt="MCSistem"/></div>
+          <span class="card-name">MCSistem</span><span class="card-tag">ERP</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://minhaconta2.cielo.com.br/site/acessos/login" target="_blank" class="card" data-name="cielo">
+          <div class="card-icon"><img src="./logo cielo.png" alt="Cielo"/></div>
+          <span class="card-name">Cielo</span><span class="card-tag">Pagamentos</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://meu.userede.com.br/login" target="_blank" class="card" data-name="rede">
+          <div class="card-icon"><img src="./logo rede.jpg" alt="Rede"/></div>
+          <span class="card-name">Rede</span><span class="card-tag">Pagamentos</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.brasilcard.net/bca/lojista/login" target="_blank" class="card" data-name="brasil card">
+          <div class="card-icon"><img src="./logo brasil.jpg" alt="Brasil Card"/></div>
+          <span class="card-name">Brasil Card</span><span class="card-tag">Pagamentos</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://minhaconta.getnet.com.br/login" target="_blank" class="card" data-name="getnet">
+          <div class="card-icon"><img src="./logo getnet.jpg" alt="Getnet"/></div>
+          <span class="card-name">Getnet</span><span class="card-tag">Pagamentos</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- LICENÇAS -->
+    <section class="section" id="section-licencas">
+      <div class="section-header"><h2>Licenças e Autorizações</h2><p>Certificados, licenças e autorizações regulatórias</p></div>
+      <div class="cards-grid">
+        <a href="https://cdp.anp.gov.br/ords/r/cdp_apex/consulta-dados-publicos-cdp/consulta-de-revenda-glp-lista" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo anp.png" alt="ANP"/></div>
+          <span class="card-name">Certificado ANP</span><span class="card-tag">Petróleo e Gás</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://servicos.ibama.gov.br/ctf/publico/arrecadacao/tcfa.php" target="_blank" class="card">
+          <div class="card-icon"><img src="./logoIBAMA.jpg" alt="IBAMA"/></div>
+          <span class="card-name">Boleto IBAMA</span><span class="card-tag">TCFA</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://servicos.ibama.gov.br/ctf/" target="_blank" class="card">
+          <div class="card-icon"><img src="./logoIBAMA.jpg" alt="IBAMA CTF"/></div>
+          <span class="card-name">Certificado IBAMA</span><span class="card-tag">CTF / APP</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://www.cbm.al.gov.br/" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo bombeiros.png" alt="Bombeiros"/></div>
+          <span class="card-name">Bombeiros AL</span><span class="card-tag">CBM-AL</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+        <a href="https://cref19.org.br/" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo cref.png" alt="CREF"/></div>
+          <span class="card-name">CREF</span><span class="card-tag">Educação Física</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal-box">
+    <h3>Destaque / Evento Comemorativo</h3>
+    <p>Adicione uma imagem para exibir em destaque na página inicial — campanha, data comemorativa ou aviso especial.</p>
+    <label class="modal-upload-area" for="file-upload-input">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <strong>Clique para selecionar uma imagem</strong>
+      <span>PNG, JPG, GIF ou WEBP — recomendado 1200 × 400 px</span>
+      <input type="file" id="file-upload-input" accept="image/*" onchange="handleFileUpload(event)"/>
+    </label>
+    <div class="modal-divider">ou cole uma URL</div>
+    <div class="modal-url-row">
+      <input type="text" id="url-input" placeholder="https://exemplo.com/imagem.jpg"/>
+      <button onclick="applyUrl()">Aplicar</button>
+    </div>
+    <div id="storage-warning" style="display:none;align-items:center;gap:10px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#92400E;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>Imagem muito grande para salvar. Use uma <strong>URL externa</strong> para que ela persista após atualizar a página.</span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-remove" onclick="removeDestaque(); closeModal()">Remover imagem</button>
+    </div>
+  </div>
 </div>
 
 <script>
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = document.querySelectorAll('.section');
+  const topbarTitle = document.getElementById('topbar-title');
+  const destaqueBtn = document.getElementById('topbar-destaque-btn');
+  const titles = { home:'Agenda Tributária', receita:'Receita Federal', sefaz:'Sefaz Alagoas', prefeitura:'Prefeituras', certidao:'Certidões', sistemas:'Sistemas', licencas:'Licenças' };
+
+  function goTo(id) {
+    navItems.forEach(n => n.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    document.querySelector(`[data-section="${id}"]`)?.classList.add('active');
+    document.getElementById(`section-${id}`)?.classList.add('active');
+    topbarTitle.textContent = titles[id] || 'Portal';
+    destaqueBtn.style.display = 'none';
+    document.getElementById('topbar').classList.toggle('topbar-hidden', id === 'home');
+    document.querySelector('.content').classList.toggle('content-flush', id === 'home');
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  navItems.forEach(item => item.addEventListener('click', () => goTo(item.dataset.section)));
+
   document.getElementById('hamburger').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('show');
@@ -1271,7 +1666,74 @@ window.addEventListener('load', ()=>{
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('overlay').classList.remove('show');
   });
-</script>
 
+  function filterCards(section, query) {
+    const grid = document.getElementById(`grid-${section}`);
+    if (!grid) return;
+    const q = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    grid.querySelectorAll('.card').forEach(card => {
+      const name = (card.dataset.name || card.querySelector('.card-name')?.textContent || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      card.style.display = name.includes(q) ? '' : 'none';
+    });
+  }
+
+  const STORAGE_KEY = 'progresso_destaque_img';
+
+  function applyDestaque(src) {
+    document.getElementById('destaque-img').src = src;
+    document.getElementById('destaque-banner').classList.add('has-image');
+    try {
+      localStorage.setItem(STORAGE_KEY, src);
+    } catch(e) {
+      const w = document.getElementById('storage-warning');
+      if (w) w.style.display = 'flex';
+    }
+  }
+  function removeDestaque() {
+    document.getElementById('destaque-img').src = '';
+    document.getElementById('destaque-banner').classList.remove('has-image');
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  }
+  function handleBannerClick() {
+    if (!document.getElementById('destaque-banner').classList.contains('has-image')) openModal();
+  }
+  function openModal() {
+    document.getElementById('url-input').value = '';
+    document.getElementById('file-upload-input').value = '';
+    document.getElementById('modal-backdrop').classList.add('open');
+  }
+  function closeModal() { document.getElementById('modal-backdrop').classList.remove('open'); }
+  function handleFileUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const original = ev.target.result;
+      // Comprime para caber no localStorage (limite ~5MB)
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 1400;
+        let w = img.width, h = img.height;
+        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        // tenta qualidade 0.85, cai para 0.6 se ainda grande
+        let data = canvas.toDataURL('image/jpeg', 0.85);
+        if (data.length > 4_000_000) data = canvas.toDataURL('image/jpeg', 0.6);
+        applyDestaque(data);
+        closeModal();
+      };
+      img.src = original;
+    };
+    reader.readAsDataURL(file);
+  }
+  function applyUrl() {
+    const url = document.getElementById('url-input').value.trim();
+    if (!url) return;
+    applyDestaque(url); closeModal();
+  }
+  document.getElementById('modal-backdrop').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+  try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) applyDestaque(saved); } catch(e) {}
+</script>
 </body>
 </html>

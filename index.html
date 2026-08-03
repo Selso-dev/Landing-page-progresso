@@ -619,41 +619,40 @@ let uid = 1;
 function nextId(){ return 'ev' + (uid++); }
 
 let events = [
-  {date:'2026-07-06',time:'09:00',title:'Vencimento ISS · Arapiraca',desc:'Vencimento da guia de ISS - Arapiraca, competência 06/2026.',category:'ISS',priority:'alta',status:'agendado'},
-  {date:'2026-07-06',time:'17:00',title:'Pagamento de salários',desc:'Pagamento dos salários da competência 06/2026.',category:'Folha de Pagamento',priority:'alta',status:'agendado'},
-  {date:'2026-07-08',time:'11:00',title:'Envio Boleto TAGPLUS (ALS/AL Veículos)',desc:'Envio do boleto TAGPLUS (empresas de pagamento em PIX), vencimento dia 10.',category:'Financeiro',priority:'media',status:'agendado'},
-  {date:'2026-07-09',time:'10:00',title:'ICMS/Fecoep ST (Saídas e Compras)',desc:'Vencimento da guia de ICMS e Fecoep ST (Saídas e Compras), competência 06/2026 - Não Optantes.',category:'ICMS/FECOEP',priority:'alta',status:'agendado'},
-  {date:'2026-07-09',time:'10:00',title:'ICMS/Fecoep Normal (Saídas)',desc:'Vencimento da guia de ICMS e Fecoep Normal (Saídas), competência 06/2026 - Não Optantes.',category:'ICMS/FECOEP',priority:'alta',status:'agendado'},
-  {date:'2026-07-09',time:'10:00',title:'ICMS/Fecoep ST (Saídas) — 252 Demelo',desc:'Vencimento da guia de ICMS e Fecoep ST (Saídas), competência 06/2026 (252 Demelo).',category:'ICMS/FECOEP',priority:'alta',status:'agendado'},
-  {date:'2026-07-10',time:'10:00',title:'ISS — Penedo, São Sebastião, Junqueiro, Maceió, São José da Tapera',desc:'Vencimento da guia de ISS nos municípios listados, competência 06/2026.',category:'ISS',priority:'alta',status:'agendado'},
-  {date:'2026-07-14',time:'12:00',title:'Transmissão EFD Contribuições',desc:'Transmissão da EFD Contribuições da competência 05/2026.',category:'Obrigação Acessória',priority:'media',status:'agendado'},
-  {date:'2026-07-15',time:'08:00',title:'Rota de entrega — Teotônio/Junqueiro/Igreja Nova/Penedo',desc:'Rota de entrega dos impostos do Departamento Fiscal.',category:'Logística',priority:'baixa',status:'agendado'},
-  {date:'2026-07-15',time:'12:00',title:'Transmissão eSocial',desc:'Transmissão do eSocial, competência 06/2026.',category:'Obrigação Acessória',priority:'alta',status:'agendado'},
-  {date:'2026-07-15',time:'12:00',title:'Transmissão EFD-Reinf',desc:'Transmissão da EFD-Reinf, competência 06/2026.',category:'Obrigação Acessória',priority:'alta',status:'agendado'},
-  {date:'2026-07-15',time:'16:00',title:'INSS Contribuinte Individual/Facultativo/Complementar',desc:'Vencimento do INSS Contribuinte Individual/Facultativo/Complementar, competência 06/2026.',category:'Encargos/Contribuições',priority:'alta',status:'agendado'},
-  {date:'2026-07-16',time:'08:00',title:'Rota de entrega — São Sebastião',desc:'Rota de entrega dos impostos do Departamento Fiscal.',category:'Logística',priority:'baixa',status:'agendado'},
-  {date:'2026-07-20',time:'10:00',title:'Guia Empréstimo eConsignado — FGTS Digital',desc:'Vencimento da guia de empréstimo eConsignado no FGTS Digital, competência 06/2026.',category:'Encargos/Contribuições',priority:'media',status:'agendado'},
-  {date:'2026-07-20',time:'10:00',title:'FGTS Digital',desc:'Vencimento da FGTS Digital, competência 06/2026.',category:'Encargos/Contribuições',priority:'urgente',status:'agendado'},
-  {date:'2026-07-20',time:'10:00',title:'DARF Contribuições (INSS + IRRF)',desc:'Vencimento do DARF Contribuições (INSS + IRRF), competência 06/2026.',category:'Encargos/Contribuições',priority:'urgente',status:'agendado'},
-  {date:'2026-07-20',time:'10:00',title:'Guia DAE Doméstico, MEI e Segurado Especial',desc:'Vencimento da guia DAE Doméstico, MEI e Segurado Especial, competência 06/2026.',category:'Encargos/Contribuições',priority:'alta',status:'agendado'},
-  {date:'2026-07-20',time:'10:00',title:'ICMS e FECOEP Antecipado',desc:'Vencimento da guia de ICMS e FECOEP Antecipado.',category:'ICMS/FECOEP',priority:'alta',status:'agendado'},
-  {date:'2026-07-20',time:'12:00',title:'Transmissão DIRBI',desc:'Transmissão da DIRBI, competência 05/2026.',category:'Obrigação Acessória',priority:'media',status:'agendado'},
-  {date:'2026-07-20',time:'12:00',title:'EFD ICMS IPI Mensal (Empresas do RJ)',desc:'Transmissão da EFD ICMS IPI Mensal, competência 06/2026 - empresas do Rio de Janeiro.',category:'Obrigação Acessória',priority:'media',status:'agendado'},
-  {date:'2026-07-20',time:'16:00',title:'Guia DAS — Simples Nacional',desc:'Vencimento da guia DAS (empresas do Simples Nacional), período 06/2026.',category:'Simples Nacional',priority:'urgente',status:'agendado'},
-  {date:'2026-07-20',time:'16:00',title:'Transmissão PGDAS-D',desc:'Transmissão do PGDAS-D, competência 06/2026.',category:'Simples Nacional',priority:'alta',status:'agendado'},
-  {date:'2026-07-24',time:'10:00',title:'PIS, COFINS e IPI',desc:'Vencimento de PIS, COFINS e IPI, competência 06/2026.',category:'Encargos/Contribuições',priority:'urgente',status:'agendado'},
-  {date:'2026-07-24',time:'10:00',title:'Parcelamento GOIÁS (J Caçula)',desc:'Vencimento do parcelamento GOIÁS - cliente J Caçula.',category:'Parcelamento',priority:'alta',status:'agendado'},
-  {date:'2026-07-24',time:'12:00',title:'EFD ICMS IPI Mensal 06/2025',desc:'Transmissão da EFD ICMS IPI Mensal, competência 06/2025 (prazo original 25/07, sábado).',category:'Obrigação Acessória',priority:'media',status:'agendado'},
-  {date:'2026-07-28',time:'08:00',title:'Rota de entrega — Parcelamentos (São Sebastião)',desc:'Rota de entrega dos parcelamentos do Departamento Fiscal.',category:'Logística',priority:'baixa',status:'agendado'},
-  {date:'2026-07-28',time:'12:00',title:'DESTDA Mensal',desc:'DESTDA Mensal da competência 06/2026.',category:'Obrigação Acessória',priority:'media',status:'agendado'},
-  {date:'2026-07-29',time:'08:00',title:'Rota folha de pagamento — Penedo/Ig. Nova/Sítio S. Sebastião',desc:'Rota de entrega da folha de pagamento do Departamento Pessoal.',category:'Logística',priority:'baixa',status:'agendado'},
-  {date:'2026-07-30',time:'08:00',title:'Rota folha de pagamento — Arapiraca/Junqueiro/Teot. Vilela',desc:'Rota de entrega da folha de pagamento do Departamento Pessoal.',category:'Logística',priority:'baixa',status:'agendado'},
-  {date:'2026-07-31',time:'08:00',title:'Rota folha de pagamento — São Sebastião',desc:'Rota de entrega da folha de pagamento do Departamento Pessoal.',category:'Logística',priority:'baixa',status:'agendado'},
-  {date:'2026-07-31',time:'10:00',title:'Guias de Parcelamentos 07/2026',desc:'Vencimento das guias de parcelamentos, período 07/2026.',category:'Parcelamento',priority:'alta',status:'agendado'},
-  {date:'2026-07-31',time:'12:00',title:'IRPJ e CSLL — 2º Trimestre 2026',desc:'Vencimento de IRPJ e CSLL, 2º trimestre de 2026, quota completa.',category:'IRPJ/CSLL/ECF',priority:'urgente',status:'agendado'},
-  {date:'2026-07-31',time:'12:00',title:'Transmissão DCTFWeb + MIT',desc:'Transmissão da DCTFWeb + MIT, competência 06/2026.',category:'Obrigação Acessória',priority:'alta',status:'agendado'},
-  {date:'2026-07-31',time:'18:00',title:'Prazo final — ECF 2025',desc:'Prazo final para envio da ECF (Escrituração Contábil Fiscal), ano-calendário 2025.',category:'IRPJ/CSLL/ECF',priority:'urgente',status:'agendado'},
-  {date:'2026-07-31',time:'16:00',title:'ICMS/Fecoep ST (Compras) — Optantes',desc:'Vencimento da guia de ICMS e Fecoep ST (Compras), competência 06/2026 - Optantes.',category:'ICMS/FECOEP',priority:'alta',status:'agendado'}
+  {date:'2026-08-05',time:'09:00',title:'Vencimento ISS · Arapiraca',desc:'Vencimento da guia de ISS - Arapiraca, competência 07/2026.',category:'ISS',priority:'alta',status:'agendado'},
+  {date:'2026-08-06',time:'17:00',title:'Pagamento de salários',desc:'Pagamento dos salários da competência 07/2026.',category:'Folha de Pagamento',priority:'alta',status:'agendado'},
+  {date:'2026-08-06',time:'11:00',title:'Envio Boleto TAGPLUS (ALS/AL Veículos)',desc:'Envio do boleto TAGPLUS (empresas de pagamento em PIX), vencimento dia 10.',category:'Financeiro',priority:'media',status:'agendado'},
+  {date:'2026-08-07',time:'10:00',title:'ICMS/Fecoep ST (Saídas e Compras)',desc:'Vencimento da guia de ICMS e Fecoep ST (Saídas e Compras), competência 07/2026 - Não Optantes.',category:'ICMS/FECOEP',priority:'alta',status:'agendado'},
+  {date:'2026-08-07',time:'10:00',title:'ICMS/Fecoep Normal (Saídas)',desc:'Vencimento da guia de ICMS e Fecoep Normal (Saídas), competência 07/2026 - Não Optantes.',category:'ICMS/FECOEP',priority:'alta',status:'agendado'},
+  {date:'2026-08-07',time:'10:00',title:'ICMS/Fecoep ST (Saídas) — 252 Demelo',desc:'Vencimento da guia de ICMS e Fecoep ST (Saídas), competência 07/2026 (252 Demelo).',category:'ICMS/FECOEP',priority:'alta',status:'agendado'},
+  {date:'2026-08-10',time:'10:00',title:'ISS — Penedo, São Sebastião, Junqueiro, Maceió, São José da Tapera',desc:'Vencimento da guia de ISS nos municípios listados, competência 07/2026.',category:'ISS',priority:'alta',status:'agendado'},
+  {date:'2026-08-14',time:'12:00',title:'Transmissão EFD Contribuições',desc:'Transmissão da EFD Contribuições da competência 06/2026.',category:'Obrigação Acessória',priority:'media',status:'agendado'},
+  {date:'2026-08-14',time:'08:00',title:'Rota de entrega — Teotônio/Junqueiro/Igreja Nova/Penedo',desc:'Rota de entrega dos impostos do Departamento Fiscal.',category:'Logística',priority:'baixa',status:'agendado'},
+  {date:'2026-08-17',time:'12:00',title:'Transmissão eSocial',desc:'Transmissão do eSocial, competência 07/2026.',category:'Obrigação Acessória',priority:'alta',status:'agendado'},
+  {date:'2026-08-17',time:'12:00',title:'Transmissão EFD-Reinf',desc:'Transmissão da EFD-Reinf, competência 07/2026 Distribuição de Lucros 2º Trim.',category:'Obrigação Acessória',priority:'alta',status:'agendado'},
+  {date:'2026-08-17',time:'16:00',title:'INSS Contribuinte Individual/Facultativo/Complementar',desc:'Vencimento do INSS Contribuinte Individual/Facultativo/Complementar, competência 07/2026.',category:'Encargos/Contribuições',priority:'alta',status:'agendado'},
+  {date:'2026-08-18',time:'08:00',title:'Rota de entrega — São Sebastião',desc:'Rota de entrega dos impostos do Departamento Fiscal.',category:'Logística',priority:'baixa',status:'agendado'},
+  {date:'2026-08-20',time:'10:00',title:'Guia Empréstimo eConsignado — FGTS Digital',desc:'Vencimento da guia de empréstimo eConsignado no FGTS Digital, competência 07/2026.',category:'Encargos/Contribuições',priority:'media',status:'agendado'},
+  {date:'2026-08-20',time:'10:00',title:'FGTS Digital',desc:'Vencimento da FGTS Digital, competência 07/2026.',category:'Encargos/Contribuições',priority:'urgente',status:'agendado'},
+  {date:'2026-08-20',time:'10:00',title:'DARF Contribuições (INSS + IRRF)',desc:'Vencimento do DARF Contribuições (INSS + IRRF), competência 07/2026.',category:'Encargos/Contribuições',priority:'urgente',status:'agendado'},
+  {date:'2026-08-20',time:'10:00',title:'Guia DAE Doméstico, MEI e Segurado Especial',desc:'Vencimento da guia DAE Doméstico, MEI e Segurado Especial, competência 07/2026.',category:'Encargos/Contribuições',priority:'alta',status:'agendado'},
+  {date:'2026-08-20',time:'10:00',title:'ICMS e FECOEP Antecipado',desc:'Vencimento da guia de ICMS e FECOEP Antecipado.',category:'ICMS/FECOEP',priority:'alta',status:'agendado'},
+  {date:'2026-08-20',time:'12:00',title:'Transmissão DIRBI',desc:'Transmissão da DIRBI, competência 06/2026.',category:'Obrigação Acessória',priority:'media',status:'agendado'},
+  {date:'2026-08-20',time:'12:00',title:'EFD ICMS IPI Mensal (Empresas do RJ)',desc:'Transmissão da EFD ICMS IPI Mensal, competência 07/2026 - empresas do Rio de Janeiro.',category:'Obrigação Acessória',priority:'media',status:'agendado'},
+  {date:'2026-08-20',time:'16:00',title:'Guia DAS — Simples Nacional',desc:'Vencimento da guia DAS (empresas do Simples Nacional), período 07/2026.',category:'Simples Nacional',priority:'urgente',status:'agendado'},
+  {date:'2026-08-20',time:'16:00',title:'Transmissão PGDAS-D',desc:'Transmissão do PGDAS-D, competência 07/2026.',category:'Simples Nacional',priority:'alta',status:'agendado'},
+  {date:'2026-08-25',time:'10:00',title:'PIS, COFINS e IPI',desc:'Vencimento de PIS, COFINS e IPI, competência 07/2026.',category:'Encargos/Contribuições',priority:'urgente',status:'agendado'},
+  {date:'2026-08-25',time:'10:00',title:'Parcelamento GOIÁS (J Caçula)',desc:'Vencimento do parcelamento GOIÁS - cliente J Caçula.',category:'Parcelamento',priority:'alta',status:'agendado'},
+  {date:'2026-08-25',time:'12:00',title:'EFD ICMS IPI Mensal 07/2026',desc:'Transmissão da EFD ICMS IPI Mensal, competência 07/2026).',category:'Obrigação Acessória',priority:'media',status:'agendado'},
+  {date:'2026-08-26',time:'08:00',title:'Rota de entrega — Parcelamentos (São Sebastião)',desc:'Rota de entrega dos parcelamentos do Departamento Fiscal.',category:'Logística',priority:'baixa',status:'agendado'},
+  {date:'2026-08-28',time:'12:00',title:'DESTDA Mensal',desc:'DESTDA Mensal da competência 07/2026.',category:'Obrigação Acessória',priority:'media',status:'agendado'},
+  {date:'2026-08-27',time:'08:00',title:'Rota folha de pagamento — Penedo/Ig. Nova/Sítio S. Sebastião',desc:'Rota de entrega da folha de pagamento do Departamento Pessoal.',category:'Logística',priority:'baixa',status:'agendado'},
+  {date:'2026-08-28',time:'08:00',title:'Rota folha de pagamento — Arapiraca/Junqueiro/Teot. Vilela',desc:'Rota de entrega da folha de pagamento do Departamento Pessoal.',category:'Logística',priority:'baixa',status:'agendado'},
+  {date:'2026-08-31',time:'08:00',title:'Rota folha de pagamento — São Sebastião',desc:'Rota de entrega da folha de pagamento do Departamento Pessoal.',category:'Logística',priority:'baixa',status:'agendado'},
+  {date:'2026-08-31',time:'10:00',title:'Guias de Parcelamentos 08/2026',desc:'Vencimento das guias de parcelamentos, período 07/2026.',category:'Parcelamento',priority:'alta',status:'agendado'},
+  {date:'2026-08-31',time:'12:00',title:'IRPJ e CSLL — 3º Trimestre 2026 Estimativa 07/2026',desc:'Vencimento de IRPJ e CSLL, 3º trimestre de 2026, quota completa.',category:'IRPJ/CSLL/ECF',priority:'urgente',status:'agendado'},
+  {date:'2026-08-31',time:'12:00',title:'Transmissão DCTFWeb + MIT',desc:'Transmissão da DCTFWeb + MIT, competência 07/2026.',category:'Obrigação Acessória',priority:'alta',status:'agendado'},
+  {date:'2026-09-02',time:'16:00',title:'ICMS/Fecoep ST (Compras) — Optantes',desc:'Vencimento da guia de ICMS e Fecoep ST (Compras), competência 07/2026 - Optantes.',category:'ICMS/FECOEP',priority:'alta',status:'agendado'}
 ].map(e=>({...e,id:nextId()}));
 
 /* ================= STATE ================= */
@@ -1266,7 +1265,7 @@ window.addEventListener('load', ()=>{
         <input type="text" placeholder="Buscar município..." oninput="filterCards('prefeitura', this.value)"/>
       </div>
       <div class="cards-grid" id="grid-prefeitura">
-        <a href="https://nfe-saosebastiao.prefeitura.info/" target="_blank" class="card" data-name="são sebastião">
+        <a href="https://saosebastiao.al.gov.br/servicos/portal-do-contribuinte/37" target="_blank" class="card" data-name="são sebastião">
           <div class="card-icon"><img src="./brasao-sao sebastiao.png" alt="São Sebastião"/></div>
           <span class="card-name">São Sebastião</span><span class="card-tag">Alagoas</span>
           <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
@@ -1623,8 +1622,13 @@ window.addEventListener('load', ()=>{
           <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
         </a>
         <a href="https://cref19.org.br/" target="_blank" class="card">
-          <div class="card-icon"><img src="./logo cref.png" alt="CREF"/></div>
+          <div class="card-icon"><img src="./brasao-sao sebastiao.png" alt="CREF"/></div>
           <span class="card-name">CREF</span><span class="card-tag">Educação Física</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        </a>
+	 <a href="https://app.saosebastiao.mgsoft.srv.br/servicos" target="_blank" class="card">
+          <div class="card-icon"><img src="./logo cref.png" alt="IPTU"/></div>
+          <span class="card-name">IPTU São Sebastião</span><span class="card-tag">GUIA IPTU</span>
           <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
         </a>
       </div>
